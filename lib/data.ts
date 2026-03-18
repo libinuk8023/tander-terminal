@@ -124,11 +124,6 @@ const ALLOWED_SOURCES = [
 
 const RSS_SOURCES = [
   {
-    key: "jin10",
-    source: "金十",
-    url: "https://rsshub.app/jin10",
-  },
-  {
     key: "reuters",
     source: "Reuters",
     url: "https://feeds.reuters.com/reuters/businessNews",
@@ -290,7 +285,9 @@ async function fetchRssItems(
     const feed = await parser.parseURL(url);
     const items = Array.isArray(feed.items) ? feed.items : [];
 
-    return items
+    console.log(`RSS ${sourceName} raw count:`, items.length);
+
+    const mapped = items
       .map((item, index) =>
         buildNewsItem(
           {
@@ -311,6 +308,10 @@ async function fetchRssItems(
         )
       )
       .filter((item) => item.title && isAllowedSource(item.source));
+
+    console.log(`RSS ${sourceName} filtered count:`, mapped.length);
+
+    return mapped;
   } catch (error) {
     console.error(`RSS fetch failed for ${sourceName}:`, error);
     return [];
